@@ -4,13 +4,15 @@ var userPass = "***";
 
 // Require 
 var express = require ('express');
-var _ = require ('underscore');
-var FeedParser = require ('feedparser');
-var RSS = require ('rss');
+//var _ = require ('underscore');
+//var FeedParser = require ('feedparser');
+//var RSS = require ('rss');
 var tvrage = require('nodejs-tvrage');
-var app = express ();
 var request = require ('request');
 var xml = require('xml');
+
+var app = express ();
+
 
 var DEFAULT_LIMIT = 50;
 // System variables
