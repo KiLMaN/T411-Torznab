@@ -1,19 +1,17 @@
 {
-  "name": "showrss-torznab",
-  "description": "Sonarr Torznab proxy for ShowRSS",
+  "name": "T411-torznab",
+  "description": "Sonarr Torznab proxy for T411",
   "version": "0.0.0",
   "private": true,
   "main": "server",
-  "homepage": "https://github.com/edcarroll/showrss-torznab",
+  "homepage": "https://github.com/KiLMaN/T411-Torznab/",
   "author": {
-    "name": "Edward Carroll"
+    "name": "KiLMaN"
   },
   "dependencies": {
     "request" : "*",
     "nodejs-tvrage":"~0.3.0",
     "express": "~4.12.2",
-    "feedparser": "git+https://github.com/ortoo/node-feedparser.git",
-    "rss": "git+https://github.com/edcarroll/node-rss.git",
-    "underscore": "~1.8.2"
+    "xml" : "*",
   }
 }
