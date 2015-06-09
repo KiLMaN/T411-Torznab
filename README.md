@@ -9,7 +9,14 @@ Simply clone this repository
 Then run 
 ```
 npm install
-node server.js <port>
+cp config.js.sample config.js
+```
+Then edit the config.js file to enter your credentials and listen port of the proxy
+
+# Starting application 
+Simply run :
+```
+node server.js 
 ```
 Then the proxy is listening on the port specified
 It will try to connect to http://api.t411.io/ to obtain a token with the credentials set in the server.js file
