@@ -1,6 +1,9 @@
 // User variables
-var userName = "***";
-var userPass = "***";
+var config = require("./config.json");
+
+var userName = config.username;
+var userPass = config.password;
+var applicationPort = config.listenPort;
 
 // Require 
 var express = require ('express');
@@ -18,7 +21,6 @@ var DEFAULT_LIMIT = 50;
 // System variables
 var baseUrl = "http://api.t411.io";
 var userToken = ""; // Holds the user token for the T411 API
-var applicationPort = process.argv[2];
 
 
 //var fs = require('fs');
@@ -351,12 +353,21 @@ function callBackLogin (error, response, body)
 	if (!error && response.statusCode == 200)
 	{
 		var jRet = JSON.parse (body);
-		userToken = jRet.token;
-		console.log ("Got token : ", userToken);
+		if(jRet.token)
+		{
+			userToken = jRet.token;
+			console.log ("Got token from T411 : ", userToken);
+			app.listen (applicationPort);
+			console.log ('Server listening on port ' + applicationPort);
+		}
+		else
+		{
+			console.log("Failed to login to T411");
+		        console.log("Please verify your credentials in 'config.json'");
+	       		process.exit(-1);	       
+		}
 	}
 }
 
-request (requestData, callBackLogin);
-app.listen (applicationPort);
-console.log ('Server listening on port ' + applicationPort);
+request (requestData, callBackLogin); // Login then start server if sucessfull
 exports = module.exports = app;

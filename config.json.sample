@@ -1,0 +1,6 @@
+{
+	"username":"USERNAME",
+	"password":"PASSWORD",
+	"listenPort":9876
+
+}
