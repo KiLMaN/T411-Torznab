@@ -12,6 +12,6 @@
     "request" : "*",
     "nodejs-tvrage":"~0.3.0",
     "express": "~4.12.2",
-    "xml" : "*",
+    "xml" : "*"
   }
 }
