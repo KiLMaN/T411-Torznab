@@ -98,6 +98,7 @@ app.get ('/api', function (req, res)
 							torrentList.push(toFeedItem(result,thisHostName));
 						});
 						
+						console.log("Got "+torrentList.length+" torrents");	
 						xmlString = xml({
 							'rss':
 							[	
@@ -173,7 +174,7 @@ app.get ('/api', function (req, res)
 							return;
 						torrentList.push(toFeedItem(result,thisHostName));
 					});
-					
+					console.log("Got "+torrentList.length+" torrents");	
 					xmlString = xml({
 						'rss':
 						[	
@@ -220,7 +221,8 @@ app.get ('/api', function (req, res)
 		var query = (req.query.q) ? req.query.q : "";
 		if(req.query.rid)
 		{
-			
+			try
+			{	
 			(new tvrage()).showInfo(req.query.rid, function(show) {
 				show.name = show.name.replace(/\([0-9]*\)/gmi, "").trim();
 				show.name = show.name.replace(/\((US|FR|ES)\)/gmi, "").trim();
@@ -233,6 +235,11 @@ app.get ('/api', function (req, res)
 				}
 				research( baseUrl + "/torrents/search/"+query ,reponseTvSearch,req.query);
 			});
+			}
+			catch (err)
+			{
+				console.log("TVrage Error"+err);
+			}
 		}
 		else
 				research( baseUrl + "/torrents/search/" ,reponseTvSearch,req.query);
