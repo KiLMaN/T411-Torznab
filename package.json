@@ -10,8 +10,9 @@
   },
   "dependencies": {
     "request" : "*",
-    "nodejs-tvrage":"~0.3.0",
+    "tvragejson" : "*",
     "express": "~4.12.2",
+    "node-cache" : "*",
     "xml" : "*"
   }
 }

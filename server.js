@@ -10,19 +10,22 @@ var express = require ('express');
 //var _ = require ('underscore');
 //var FeedParser = require ('feedparser');
 //var RSS = require ('rss');
-var tvrage = require('nodejs-tvrage');
+var tvrage = require('tvragejson');
 var request = require ('request');
 var xml = require('xml');
+var NodeCache = require('node-cache');
 
-var app = express ();
+
 
 
 var DEFAULT_LIMIT = 50;
+var TVRAGE_CACHE_MINS = 60;
 // System variables
 var baseUrl = "http://api.t411.io";
 var userToken = ""; // Holds the user token for the T411 API
 
-
+var app = express ();
+var tvRageCache = new NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
 //var fs = require('fs');
 //var util = require('util');
 //var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
@@ -221,25 +224,48 @@ app.get ('/api', function (req, res)
 		var query = (req.query.q) ? req.query.q : "";
 		if(req.query.rid)
 		{
-			try
-			{	
-			(new tvrage()).showInfo(req.query.rid, function(show) {
-				show.name = show.name.replace(/\([0-9]*\)/gmi, "").trim();
-				show.name = show.name.replace(/\((US|FR|ES)\)/gmi, "").trim();
-				show.name = show.name.replace(/['|"](s)*/gmi, "").trim();
-				if (req.query.ep) { //This is an episode
-					query = show.name + ' S' + pad(+req.query.season, 2) + 'E' + pad(+req.query.ep, 2);
+				function researchTvRage(show) {
+
+						var showName = show['Showinfo']['showname'];
+						console.log("Researching for :" + showName);
+						showName = showName.replace(/\([0-9]*\)/gmi, "").trim();
+						showName = showName.replace(/\((US|FR|ES)\)/gmi, "").trim();
+						showName = showName.replace(/['|"](s)*/gmi, "").trim();
+						console.log("Clean Name : "+showName);
+						if (req.query.ep) { //This is an episode
+							query = showName + ' S' + pad(+req.query.season, 2) + 'E' + pad(+req.query.ep, 2);
+						}
+						else { //This is a season
+							query = showName + ' ' + req.query.season;
+						}
+						research( baseUrl + "/torrents/search/"+query ,reponseTvSearch,req.query);
 				}
-				else { //This is a season
-					query = show.name + ' ' + req.query.season;
+				function tvRageResult(err,show)
+				{
+					if(err)
+					{
+						console.log("TvRage Error : "+err);
+						tvrage.showInfo(req.query.rid, tvRageResult);
+					}
+					else
+					{
+						console.log("Got informations from TvRage");
+						tvRageCache.set(req.query.rid,show);
+						researchTvRage(show);
+					}
+
 				}
-				research( baseUrl + "/torrents/search/"+query ,reponseTvSearch,req.query);
-			});
-			}
-			catch (err)
-			{
-				console.log("TVrage Error"+err);
-			}
+				var cachedShow = tvRageCache.get(req.query.rid);
+				if(cachedShow == undefined)
+				{
+					console.log("TvRage Cache for "+req.query.rid+" empty, querying tvRage");
+					tvrage.showInfo(req.query.rid,tvRageResult);
+				}
+				else
+				{
+					console.log("TvRage Cache hit for " +req.query.rid);
+					researchTvRage(cachedShow);
+				}
 		}
 		else
 				research( baseUrl + "/torrents/search/" ,reponseTvSearch,req.query);
