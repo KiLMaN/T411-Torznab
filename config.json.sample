@@ -1,6 +1,7 @@
 {
 	"username":"USERNAME",
 	"password":"PASSWORD",
-	"listenPort":9876
-
+	"listenPort":9876,
+	"debugVerified":false,
+	"onlyVerified":true
 }

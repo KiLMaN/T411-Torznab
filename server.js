@@ -175,6 +175,13 @@ app.get ('/api', function (req, res)
 					jsonResp.torrents.forEach( function(result) {
 						if(typeof result != 'object') // if the result is not a object (there is no details of the torrent )
 							return;
+						
+						if(config.onlyVerified && 0 == result.isVerified)
+						{
+							if(config.debugVerified)
+								console.log("Torrent "+result.name +" is not verified skipping !");
+							return;
+						}
 						torrentList.push(toFeedItem(result,thisHostName));
 					});
 					console.log("Got "+torrentList.length+" torrents");	
