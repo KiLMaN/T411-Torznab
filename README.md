@@ -9,7 +9,7 @@ Simply clone this repository
 Then run 
 ```
 npm install
-cp config.js.sample config.js
+cp config.json.sample config.json
 ```
 Then edit the config.js file to enter your credentials and listen port of the proxy
 
