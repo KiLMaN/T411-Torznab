@@ -17,6 +17,7 @@ var TVRAGE_CACHE_MINS = 300; // 5 Hours
 
 // System variables
 var baseUrl = "http://api.t411.io";
+var baset411 = "https://t411.io";
 var userToken = ""; // Holds the user token for the T411 API
 
 var app = express ();
@@ -270,6 +271,7 @@ function _toTorznabElement (torrent,currentHostname)
 			/*{custom_elements:[*/
 			{'description':torrent.name},
 			{'pubDate':(new Date (torrent.added).toGMTString ())},
+			{'comments': baset411+'/t/'+torrent.id},
 			//{'category': 'HDTV 1080p'},
 			//{'link':''},
 			//{'torznab:attr': { _attr: { name: 'rageid', value: '37780'}}},
