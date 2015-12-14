@@ -191,7 +191,12 @@ app.get ('/api', function (req, res)
 						if(err)
 						{
 							console.log("TvRage Error : "+err);
-							tvmaze.showInfoTvRage(req.query.rid, tvRageResult);
+							if(err.http_code == 404)
+							{
+
+							}
+							else
+								tvmaze.showInfoTvRage(req.query.rid, tvRageResult);
 						}
 						else
 						{

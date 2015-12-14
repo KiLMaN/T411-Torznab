@@ -30,7 +30,9 @@ _request = function(url, callback) {
 // status code.
 _httpError = function(error, response, callback) {
     var status = (response && response.statusCode) ? (response.statusCode) : (error.code);
-    callback(new Error(util.format("The TVRage API responded with status code %s", status)));
+    var err = new Error(util.format("TvMaze API responded with status code %s",status));
+    err.http_code = status;
+    callback(err);
 };
 
 
