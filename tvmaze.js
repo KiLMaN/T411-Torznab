@@ -33,6 +33,7 @@ _httpError = function(error, response, callback) {
     var err = new Error(util.format("TvMaze API responded with status code %s",status));
     err.http_code = status;
     callback(err);
+
 };
 
 
