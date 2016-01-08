@@ -152,7 +152,7 @@ function research(urlSearch,callback,originalQuery)
 // Map URL
 app.get ('/api', function (req, res)
 		{
-			var thisHostName = (req.headers['x-forwarded-host']) ? (req.headers['x-forwarded-host'] ) : ('127.0.0.1:' + applicationPort);
+			var thisHostName = (req.headers['x-forwarded-host']) ? (req.headers['x-forwarded-host'] ) : (req.hostname + ':' + applicationPort);
 			thisHostName = 'http://' + thisHostName;
 
 			if(req.query.t && req.query.t == 'caps')
