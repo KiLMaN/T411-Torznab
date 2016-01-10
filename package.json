@@ -9,7 +9,10 @@
     "name": "KiLMaN"
   },
   "dependencies": {
+    "underscore" : "*",
+    "winston":"*",
     "request" : "*",
+    "minimist" : "*",
     "tvragejson" : "*",
     "express": "~4.12.2",
     "node-cache" : "*",
