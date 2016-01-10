@@ -27,7 +27,7 @@ if(argv.port != undefined)
 
 // Configuration
 var DEFAULT_LIMIT = 50;
-var TVRAGE_CACHE_MINS = 300; // 5Hous
+var TVRAGE_CACHE_MINS = 300; // 5Hours
 
 // System variables
 var baseUrl = "http://api.t411.in";
@@ -249,6 +249,7 @@ app.get ('/api', function (req, res)
 			};
 		
 			if(context.req.query.t && context.req.query.t == 'caps')
+
 			{
 				_TorznabServerPresentation(context.res);
 				return;
