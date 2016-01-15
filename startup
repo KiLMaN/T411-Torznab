@@ -1,0 +1,12 @@
+#!/bin/sh
+
+addgroup -g ${GID} torznab && adduser -h /usr/src/app -D -G torznab -s /bin/sh -u ${UID} torznab
+
+cp /usr/src/app/config.json.sample /usr/src/app/config.json
+
+sed -i 's/<username>/'${USERNAME}'/' /usr/src/app/config.json
+sed -i 's/<password>/'${PASSWORD}'/' /usr/src/app/config.json
+
+chown -R torznab:torznab /usr/src/app
+
+su - torznab -c "cd /usr/src/app/; npm start"
