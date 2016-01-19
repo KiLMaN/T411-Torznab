@@ -4,8 +4,8 @@ winston.emitErrs = true;
 var logger = new winston.Logger({
 	transports: [
 		new winston.transports.File({
-			level: 'verbose',
-			filename: 'T411-Torznab.log',
+			level: 'debug',
+			filename: './T411-Torznab.log',
 			//handleExceptions: true,
 			json: false,
 			maxsize: 5242880, //5MB

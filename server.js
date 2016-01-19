@@ -1,3 +1,6 @@
+// Insure that we run  in the same directory as the script file
+process.chdir(__dirname);
+
 // User variables
 var config = require("./config.json");
 var userName = config.username;
@@ -5,6 +8,7 @@ var userPass = config.password;
 var applicationPort = config.listenPort;
 
 // Require 
+var path = require('path');
 var _ = require('underscore');
 var express = require ('express');
 //var tvrage = require('tvragejson');
@@ -17,8 +21,8 @@ var _logger = require('./logger.js');
 
 
 
-_logger.info("Stating T411 proxy");
-
+_logger.info("Starting T411 proxy");
+_logger.info("Running in : " + process.cwd());
 if(argv.port != undefined)
 {
 	applicationPort = argv.port;
