@@ -5,8 +5,9 @@ var util = require("util"),
     // All the URLs we will be making use of.
     baseUrl = "http://api.tvmaze.com/",
     showInfoUrl = "lookup/shows",
-    fullShowInfoUrl = "lookup/shows";
-
+    fullShowInfoUrl = "lookup/shows",
+    seachUrl = "singlesearch/shows",
+    showInforTvMazeUrl = "shows/";
 // Responsible for sending a request down to the url that has
 // been passed as an argument.
 _request = function(url, callback) {
@@ -21,19 +22,28 @@ _request = function(url, callback) {
 		callback(err,output);
             //});
         } else {
-            _httpError(err, response, callback);
+            _httpError(err, response, callback, url);
         }
     });
 };
 
 // Responsible for raising an error with the appropriate
 // status code.
-_httpError = function(error, response, callback) {
+_httpError = function(error, response, callback,url) {
     var status = (response && response.statusCode) ? (response.statusCode) : (error.code);
-    var err = new Error(util.format("TvMaze API responded with status code %s",status));
+    var err = new Error(util.format("TvMaze API responded with status code %s url : %s ",status,url));
     err.http_code = status;
     callback(err);
 
+};
+
+exports.showInfoSearchName = function(showName, callback){
+	var url = util.format("%s%s?q=%s",baseUrl,searchUrl,showName);
+	_request(url,callback);
+};
+exports.showInfoTvMaze = function(tvMazeId, callback){
+	var url = util.format("%s%s%s",baseUrl, showInforTvMazeUrl,tvMazeId);
+	_request(url,callback);
 };
 
 

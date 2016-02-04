@@ -47,6 +47,7 @@ var _T411_TermsPrefixEpisodes = {name :"SérieTV - Episode", 	idTerm : 0, values
 
 var app = express ();
 var tvRageCache = new NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
+var tvMazeCache = new NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
 var T411Categories = [];
 
 function _TorznabServerPresentation(res)
@@ -59,7 +60,7 @@ function _TorznabServerPresentation(res)
 			{'registration':{_attr:{'available':'no','open':'no'}}},
 				{'searching':[
 					{'search':{_attr:{'available':'yes'}}},
-					{'tv-search':{_attr:{'available':'yes','supportedParams':'q,rid,season,ep'}}},
+					{'tv-search':{_attr:{'available':'yes','supportedParams':'q,rid,tvdbid,tvmazeid,season,ep'}}},
 					{'movie-search':{_attr:{'available':'no'}}},
 				]},
 				{'categories':[]}
@@ -230,6 +231,9 @@ function tvRageResult(err,show)
 		if(err.http_code == 404)
 		{
 			_logger.warn("Error from TvRage 404 Not Found !");
+			context.res.contentType ('text/plain');
+			context.res.status (404);
+			//tvmaze.showSearchName(req.query.name, tvRageResult);	
 		}
 		else
 			tvmaze.showInfoTvRage(req.query.rid, tvRageResult);
@@ -265,10 +269,26 @@ app.get ('/api', function (req, res)
 			}
 			else if(context.req.query.t && context.req.query.t == 'tvsearch')
 			{						
-				
-				if(context.req.query.rid)
+				_logger.debug(context.req.query);
+				if(context.req.query.tvmazeid)
 				{
+					_logger.debug("Requested TvMaez Id : "+context.req.query.tvmazeid);
+					var cachedShow = tvMazeCache.get(context.req.query.tvmazeid);
+					if(cachedShow == undefined)
+					{
+						_logger.debug("TvMaze Cache for "+context.req.query.tvmazeid+" empty, querying tvMaze");
+						tvmaze.showInfoTvMaze(context.req.query.tvmazeid,tvRageResult.bind({context:context}));
+					}
+					else 
+					{
+						_logger.debug("TvMaze Cache hit for " +context.req.query.tvmazeid);
+						researchTvRage(cachedShow,context);
+					}
 
+				}
+				else if(context.req.query.rid)
+				{
+					_logger.debug("Requested Rage ID : "+context.req.query.rid);
 					var cachedShow = tvRageCache.get(context.req.query.rid);
 					if(cachedShow == undefined)
 					{
@@ -281,9 +301,12 @@ app.get ('/api', function (req, res)
 						researchTvRage(cachedShow,context);
 					}
 				}
+
 				else
 				{
 					var query = (context.req.query.q) ? context.req.query.q : "";
+					_logger.debug("Query : " + query);
+					_logger.debug(context.req.query);
 					if(context.req.query.season)
 					{						
 						var seasonNumber = parseInt(context.req.query.season,10);
