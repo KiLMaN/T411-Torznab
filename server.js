@@ -221,7 +221,31 @@ function researchTvRage(show,context) {
 	}
 	research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context: context} ),context.req.query);
 }
-function tvRageResult(err,show)
+function tvMazeResult(err,show)
+{
+	var context = this.context;
+	//var req = this.req; // using binded context
+	if(err)
+	{
+		_logger.error("TvMaze Error : "+err);
+		if(err.http_code == 404)
+		{
+			_logger.warn("Error from tvMaze 404 Not Found !");
+			context.res.contentType ('text/plain');
+			context.res.status (404);
+			//tvmaze.showSearchName(req.query.name, tvRageResult);	
+		}
+		else
+			tvmaze.showInfoTvMaze(req.query.tvmazeid, tvRageResult);
+	}
+	else
+	{
+		_logger.debug("Got informations from TvMaze");
+		tvMazeCache.set(context.req.query.tvmazeid,show);
+		
+		researchTvRage(show,context);
+	}
+}function tvRageResult(err,show)
 {
 	var context = this.context;
 	//var req = this.req; // using binded context
@@ -277,7 +301,7 @@ app.get ('/api', function (req, res)
 					if(cachedShow == undefined)
 					{
 						_logger.debug("TvMaze Cache for "+context.req.query.tvmazeid+" empty, querying tvMaze");
-						tvmaze.showInfoTvMaze(context.req.query.tvmazeid,tvRageResult.bind({context:context}));
+						tvmaze.showInfoTvMaze(context.req.query.tvmazeid,tvMazeResult.bind({context:context}));
 					}
 					else 
 					{
@@ -368,7 +392,7 @@ function _toTorznabElement (torrent,currentHostname)
 {
 	return {
 		'item':
-			[	
+		[	
 			{title: torrent.name},
 			{guid: torrent.id}, 
 			{enclosure:{
@@ -379,22 +403,28 @@ function _toTorznabElement (torrent,currentHostname)
 					   }
 				   }	
 			},
-				{'link': currentHostname+'/torrent/'+torrent.id}, // Download link (via this proxy)
+			{'link': currentHostname+'/torrent/'+torrent.id}, // Download link (via this proxy)
+			{'links' : [
+				{
+					'link':{_attr:{'length':torrent.size}},
+					'link':{_attr:{'length':torrent.size}},
+					//'2':{'url':currentHostname+'/torrent/'+torrent.id}
+				}
+			]},
+			{'description':	torrent.name},
+			{'pubDate':		(new Date (torrent.added).toGMTString ())},
+			{'comments': 	baset411+'/t/'+torrent.id},
+			//{'category': 'HDTV 1080p'},
 
-				{'description':	torrent.name},
-					{'pubDate':		(new Date (torrent.added).toGMTString ())},
-					{'comments': 	baset411+'/t/'+torrent.id},
-						//{'category': 'HDTV 1080p'},
-
-						//{'torznab:attr': { _attr: { name: 'rageid', value: '37780'}}},
-						//{'torznab:attr':{_attr:{name: 'infohash'		, value:torrent['showrss:info_hash']['#']}}},
-						//{'torznab:attr':{_attr:{name: 'magneturl'		, value:torrent.link}}},
-						{'torznab:attr':{_attr:{name: 'seeders'			, value:torrent.seeders}}},
-						{'torznab:attr':{_attr:{name: 'leechers'		, value:torrent.leechers}}},
-							//{'torznab:attr':{_attr:{name: 'minimumratio'	, value:'0.0'}}},
-							//{'torznab:attr':{_attr:{name: 'minimumseedtime'	, value:'0.0'}}},
-							{'torznab:attr':{_attr:{name: 'size'			, value:torrent.size}}},
-							]
+			//{'torznab:attr': { _attr: { name: 'rageid', value: '37780'}}},
+			//{'torznab:attr':{_attr:{name: 'infohash'		, value:torrent['showrss:info_hash']['#']}}},
+			//{'torznab:attr':{_attr:{name: 'magneturl'		, value:torrent.link}}},
+			{'torznab:attr':{_attr:{name: 'seeders'			, value:torrent.seeders}}},
+			{'torznab:attr':{_attr:{name: 'leechers'		, value:torrent.leechers}}},
+			//{'torznab:attr':{_attr:{name: 'minimumratio'	, value:'0.0'}}},
+			//{'torznab:attr':{_attr:{name: 'minimumseedtime'	, value:'0.0'}}},
+			{'torznab:attr':{_attr:{name: 'size'			, value:torrent.size}}},
+		]
 	};
 }
 
