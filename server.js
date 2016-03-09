@@ -296,7 +296,7 @@ app.get ('/api', function (req, res)
 				_logger.debug(context.req.query);
 				if(context.req.query.tvmazeid)
 				{
-					_logger.debug("Requested TvMaez Id : "+context.req.query.tvmazeid);
+					_logger.debug("Requested TvMaze Id : "+context.req.query.tvmazeid);
 					var cachedShow = tvMazeCache.get(context.req.query.tvmazeid);
 					if(cachedShow == undefined)
 					{
@@ -312,7 +312,7 @@ app.get ('/api', function (req, res)
 				}
 				else if(context.req.query.rid)
 				{
-					_logger.debug("Requested Rage ID : "+context.req.query.rid);
+					_logger.debug("Requested TvRage ID : "+context.req.query.rid);
 					var cachedShow = tvRageCache.get(context.req.query.rid);
 					if(cachedShow == undefined)
 					{
