@@ -581,17 +581,17 @@ function callbackLoginT411 (error, response, body)
 		}
 		else
 		{
-			_logger.err("Failed to login to T411 : Please verify your credentials in 'config.json'");
+			_logger.error("Failed to login to T411 : Please verify your credentials in 'config.json'");
 			process.exit(-1);	       
 		}
 	}
 	else
 	{
 		if(error)
-			_logger.err("Cannot log in to T411 : "+error);
+			_logger.error("Cannot log in to T411 : "+error);
 		else
 		{
-			_logger.err("Response from T411 invalid. Error : "+response.statusCode);
+			_logger.error("Response from T411 invalid. Error : "+response.statusCode);
 			setTimeout(loginT411,1*60*1000);
 		}
 	}
