@@ -601,6 +601,7 @@ function callbackLoginT411 (error, response, body)
 		}
 		else
 		{
+<<<<<<< HEAD
 			if(jRet.token)
 			{
 				userToken = jRet.token;
@@ -610,9 +611,13 @@ function callbackLoginT411 (error, response, body)
 			}
 			else
 			{
-				_logger.error("Failed to login to T411 : Please verify your credentials in 'config.json'");
+				_logger.err("Failed to login to T411 : Please verify your credentials in 'config.json'");
 				process.exit(-1);	       
 			}
+=======
+			_logger.error("Failed to login to T411 : Please verify your credentials in 'config.json'");
+			process.exit(-1);	       
+>>>>>>> 056d9b3ca4b9acc43a7e7c941505077bcb377c62
 		}
 	}
 	else
