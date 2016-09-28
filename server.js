@@ -107,6 +107,16 @@ function reponseSearch(error, response, body)
 				body = body.substring(body.lastIndexOf("</div>") + 6 );
 
 			var jsonResp = JSON.parse (body); // Parse The JSON
+			
+			if(jsonResp.error != undefined)
+			{
+				if(jsonResp.code == 201 || jsonResp.code == 202)
+				{
+
+					loginT411();
+				
+				}
+			}
 
 			var torrentList = [];
 			if(jsonResp.torrents != undefined)
@@ -571,18 +581,38 @@ function callbackLoginT411 (error, response, body)
 	if (!error && response.statusCode == 200)
 	{
 		var jRet = JSON.parse (body);
-		if(jRet.token)
+		
+		if(userToken == "")
 		{
-			userToken = jRet.token;
-			_logger.debug ("Got token from T411 : "+ userToken);
-			_logger.info("T411 login successfull ! ");
-			getT411Cats();
 
+			if(jRet.token)
+			{
+				userToken = jRet.token;
+				_logger.debug ("Got token from T411 : "+ userToken);
+				_logger.info("T411 login successfull ! ");
+				getT411Cats();
+	
+			}
+			else
+			{
+				_logger.err("Failed to login to T411 : Please verify your credentials in 'config.json'");
+				process.exit(-1);	       
+			}
 		}
 		else
 		{
-			_logger.err("Failed to login to T411 : Please verify your credentials in 'config.json'");
-			process.exit(-1);	       
+			if(jRet.token)
+			{
+				userToken = jRet.token;
+				_logger.debug ("Got token from T411 : "+ userToken);
+				_logger.info("T411 relogin successfull ! ");
+	
+			}
+			else
+			{
+				_logger.err("Failed to login to T411 : Please verify your credentials in 'config.json'");
+				process.exit(-1);	       
+			}
 		}
 	}
 	else
