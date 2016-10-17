@@ -216,7 +216,7 @@ function researchTvRage(show,context) {
 	
 	_logger.debug("Clean Name : "+showName);
 	var query = (context.req.query.q) ? context.req.query.q : showName;
-	query += "?term[51][]=1210";
+	query += "?term[51][]=1216";
 	if(context.req.query.season)
 	{
 		var seasonNumber = parseInt(context.req.query.season,10);
@@ -339,7 +339,7 @@ app.get ('/api', function (req, res)
 				else
 				{
 					var query = (context.req.query.q) ? context.req.query.q : "";
-					query += "?term[51][]=1210";
+					query += "?term[51][]=1216";
 					_logger.debug("Query : " + query);
 					_logger.debug(context.req.query);
 					if(context.req.query.season)
@@ -355,6 +355,7 @@ app.get ('/api', function (req, res)
 						}
 
 					}
+
 					research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context:context} ),context.req.query);
 				}
 			}
