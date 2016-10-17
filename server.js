@@ -38,11 +38,11 @@ var baseUrl = "http://api.t411.ch";
 var baset411 = "https://www.t411.ch";
 var userToken = ""; // Holds the user token for the T411 API
 
-var _T411_CatTVShow = {name:"Série TV", idCat : 0};
+var _T411_CatTVShow = {name:"SÃ©rie TV", idCat : 0};
 var _T411_CatFilms  = {name:"Film", 	idCat : 0};
 
-var _T411_TermsPrefixSeasons = 	{name :"SérieTV - Saison", 	idTerm : 0, values:[]};
-var _T411_TermsPrefixEpisodes = {name :"SérieTV - Episode", 	idTerm : 0, values:[]};
+var _T411_TermsPrefixSeasons = 	{name :"SÃ©rieTV - Saison", 	idTerm : 0, values:[]};
+var _T411_TermsPrefixEpisodes = {name :"SÃ©rieTV - Episode", 	idTerm : 0, values:[]};
 
 
 var app = express ();
@@ -216,11 +216,11 @@ function researchTvRage(show,context) {
 	
 	_logger.debug("Clean Name : "+showName);
 	var query = (context.req.query.q) ? context.req.query.q : showName;
-	
+	query += "?term[51][]=1216";
 	if(context.req.query.season)
 	{
 		var seasonNumber = parseInt(context.req.query.season,10);
-		query += "?term["+ _T411_TermsPrefixSeasons.idTerm+"][]="+_T411_TermsPrefixSeasons.values[seasonNumber]+"";
+		query += "&term["+ _T411_TermsPrefixSeasons.idTerm+"][]="+_T411_TermsPrefixSeasons.values[seasonNumber]+"";
 		if(context.req.query.ep) { // Episode
 			var episodeNumber = parseInt(context.req.query.ep,10);
 			query += "&term["+ _T411_TermsPrefixEpisodes.idTerm + "][]=" + _T411_TermsPrefixEpisodes.values[episodeNumber] +"";
@@ -339,12 +339,13 @@ app.get ('/api', function (req, res)
 				else
 				{
 					var query = (context.req.query.q) ? context.req.query.q : "";
+					query += "?term[51][]=1216";
 					_logger.debug("Query : " + query);
 					_logger.debug(context.req.query);
 					if(context.req.query.season)
 					{						
 						var seasonNumber = parseInt(context.req.query.season,10);
-						query +=  "?term["+ _T411_TermsPrefixSeasons.idTerm+"][]="+_T411_TermsPrefixSeasons.values[seasonNumber]+"";
+						query +=  "&term["+ _T411_TermsPrefixSeasons.idTerm+"][]="+_T411_TermsPrefixSeasons.values[seasonNumber]+"";
 						if(context.req.query.ep) { // Episode
 							var episodeNumber = parseInt(context.req.query.ep,10);
 							query += "&term["+ _T411_TermsPrefixEpisodes.idTerm + "][]=" + _T411_TermsPrefixEpisodes.values[episodeNumber] +"";
@@ -354,6 +355,7 @@ app.get ('/api', function (req, res)
 						}
 
 					}
+
 					research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context:context} ),context.req.query);
 				}
 			}

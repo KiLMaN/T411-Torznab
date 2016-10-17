@@ -4,6 +4,8 @@ Torznab proxy for T411 French Private Torrent Tracker
 
 It uses Nodejs
 
+Search for VOSTFR series
+
 # Installation
 Simply clone this repository
 Then run 
