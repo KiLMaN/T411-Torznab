@@ -2,8 +2,7 @@
 
 cp /usr/src/app/config.json.sample /usr/src/app/config.json
 
-sed -i 's/<username>/'${USERNAME}'/' /usr/src/app/config.json
-sed -i 's/<password>/'${PASSWORD}'/' /usr/src/app/config.json
+sed -i 's/<username>/'${USERNAME}'/;s/<password>/'${PASSWORD}'/;s/<debugverified>/'${DEBUGVERIFIED}'/;s/<onlyverified>/'${ONLYVERIFIED}'/' /usr/src/app/config.json
 
 cd /usr/src/app
 exec npm start
