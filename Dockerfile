@@ -1,9 +1,16 @@
-FROM xataz/node:5.3.0-onbuild
+FROM xataz/node:7-onbuild
 MAINTAINER xataz <https://github.com/xataz>
 
-ENV GID=991 UID=991 USERNAME="t411" PASSWORD="t411"
+ENV GID=991 \
+    UID=991 \
+    USERNAME="t411" \
+    PASSWORD="t411" \
+    ONLYVERIFIED=true \
+    DEBUGVERIFIED=false
 
-ADD startup /usr/bin/startup
-RUN chmod +x /usr/bin/startup
+ADD startup /usr/local/bin/startup
+RUN chmod +x /usr/local/bin/startup
 
-CMD ["startup"]
+EXPOSE 9876
+
+CMD ["/usr/local/bin/startup"]
