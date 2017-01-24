@@ -12,10 +12,13 @@
     "underscore" : "*",
     "winston":"*",
     "request" : "*",
+    "request-promise" : "*",
     "minimist" : "*",
     "tvragejson" : "*",
     "express": "~4.12.2",
     "node-cache" : "*",
-    "xml" : "*"
+    "xml" : "*",
+    "imdb-api" : "*",
+    "es6-promise" : "*"
   }
 }

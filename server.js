@@ -18,7 +18,7 @@ var NodeCache = require('node-cache');
 var tvmaze = require('./tvmaze.js');
 var argv = require('minimist')(process.argv.slice(2));
 var _logger = require('./logger.js');
-
+const imdb = require('imdb-api');
 
 
 _logger.info("Starting T411 proxy");
@@ -48,6 +48,7 @@ var _T411_TermsPrefixEpisodes = {name :"SérieTV - Episode", 	idTerm : 0, values
 var app = express ();
 var tvRageCache = new NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
 var tvMazeCache = new NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
+var MovieCache = new  NodeCache({stdTTL:TVRAGE_CACHE_MINS * 60});
 var T411Categories = [];
 
 function _TorznabServerPresentation(res)
@@ -61,7 +62,7 @@ function _TorznabServerPresentation(res)
 				{'searching':[
 					{'search':{_attr:{'available':'yes'}}},
 					{'tv-search':{_attr:{'available':'yes','supportedParams':'q,rid,tvdbid,tvmazeid,season,ep'}}},
-					{'movie-search':{_attr:{'available':'no'}}},
+					{'movie-search':{_attr:{'available':'yes','supportedParams':'q,imdbid'}}},
 				]},
 				{'categories':[]}
 			]
@@ -206,6 +207,19 @@ function research(urlSearch,callback,originalQuery)
 	};
 	_logger.debug(requestData);
 	request (requestData,callback);
+}
+function researchMovie(show,context) {
+	//_logger.debug(show);
+	var showName = show['title'];
+	_logger.debug("Researching for : " + showName);
+	showName = showName.replace(/\([0-9]*\)/gmi, "").trim();
+	showName = showName.replace(/\((US|FR|ES)\)/gmi, "").trim();
+	showName = showName.replace(/['|"](s)*/gmi, "").trim();
+
+	_logger.debug("Clean Name : "+showName);
+	var query = (context.req.query.q) ? context.req.query.q : showName;
+
+	research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context: context} ),context.req.query);
 }
 function researchTvRage(show,context) {
 	var showName = show['Showinfo']['showname'];
@@ -354,6 +368,38 @@ app.get ('/api', function (req, res)
 						}
 
 					}
+					research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context:context} ),context.req.query);
+				}
+			}
+			else if(context.req.query.t && context.req.query.t == 'movie')
+			{
+				_logger.debug(context.req.query);
+				if(context.req.query.imdbid)
+				{
+					_logger.debug("Requested IMDB Id : "+context.req.query.imdbid);
+					
+					var cachedMovie = MovieCache.get(context.req.query.imdbid);
+					if(cachedMovie == undefined)
+					{
+						_logger.debug("Movie Cache for "+context.req.query.imdbid+" empty, querying IMDB");
+						imdb.getReq({id: "tt"+context.req.query.imdbid},function(err,things) {
+							MovieCache.set(context.req.query.imdbid,things);
+							researchMovie(things,context);
+						});
+
+					}
+					else
+					{
+						_logger.debug("Movie Cache hit for " +context.req.query.imdbid);
+						researchMovie(cachedMovie,context);
+					}
+
+				}
+				else
+				{
+					var query = (context.req.query.q) ? context.req.query.q : "";
+					_logger.debug("Query : " + query);
+					_logger.debug(context.req.query);
 					research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context:context} ),context.req.query);
 				}
 			}
