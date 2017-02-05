@@ -18,8 +18,7 @@ var NodeCache = require('node-cache');
 var tvmaze = require('./tvmaze.js');
 var argv = require('minimist')(process.argv.slice(2));
 var _logger = require('./logger.js');
-const imdb = require('imdb-api');
-
+const imdb = require('imdb');
 
 _logger.info("Starting T411 proxy");
 _logger.info("Running in : " + process.cwd());
@@ -99,9 +98,9 @@ function _TorznabServerPresentation(res)
 function reponseSearch(error, response, body)
 {
 	var context = this.context;
+	var xmlString;
 	if (!error && response.statusCode == 200)
 	{
-		var xmlString;
 		try {
 			// Remove <div> warnings if they exists
 			if(body.indexOf("</div>") != -1)
@@ -185,9 +184,23 @@ function reponseSearch(error, response, body)
 					]
 			});
 		}
-		context.res.contentType('text/xml');
-		context.res.send('<?xml version="1.0" encoding="utf-8"?>\n' + xmlString);
+	} else {
+		xmlString = xml({
+			'rss':
+				[
+				{_attr:{'version':'2.0','xmlns:torznab':'http://torznab.com/schemas/2015/feed'}},
+				{'channel':
+					[
+ 					{'title':'T411 Torznab'},
+					{'description':'T411 Torznab search result'},
+					{'torznab:response':{_attr:{'offset':'0','total':'0'}}}
+					]
+				}
+				]
+		});
 	}
+	context.res.contentType('text/xml');
+	context.res.send('<?xml version="1.0" encoding="utf-8"?>\n' + xmlString);
 }
 
 function research(urlSearch,callback,originalQuery)
@@ -209,12 +222,13 @@ function research(urlSearch,callback,originalQuery)
 	request (requestData,callback);
 }
 function researchMovie(show,context) {
-	//_logger.debug(show);
+	// _logger.debug(show);
 	var showName = show['title'];
 	_logger.debug("Researching for : " + showName);
 	showName = showName.replace(/\([0-9]*\)/gmi, "").trim();
 	showName = showName.replace(/\((US|FR|ES)\)/gmi, "").trim();
 	showName = showName.replace(/['|"](s)*/gmi, "").trim();
+	showName= require('querystring').escape(showName);
 
 	_logger.debug("Clean Name : "+showName);
 	var query = (context.req.query.q) ? context.req.query.q : showName;
@@ -382,9 +396,17 @@ app.get ('/api', function (req, res)
 					if(cachedMovie == undefined)
 					{
 						_logger.debug("Movie Cache for "+context.req.query.imdbid+" empty, querying IMDB");
-						imdb.getReq({id: "tt"+context.req.query.imdbid},function(err,things) {
-							MovieCache.set(context.req.query.imdbid,things);
-							researchMovie(things,context);
+						var url = 'tt' + context.req.query.imdbid;
+						imdb(url,function(err,things) {
+							if (err) {
+								var query = (context.req.query.q) ? context.req.query.q : "";
+								_logger.debug("Query : " + query);
+								_logger.debug(context.req.query);
+								research( baseUrl + "/torrents/search/"+query ,reponseSearch.bind( {context:context} ),context.req.query);
+							} else {
+								MovieCache.set(context.req.query.imdbid,things);
+								researchMovie(things,context);
+							}
 						});
 
 					}
