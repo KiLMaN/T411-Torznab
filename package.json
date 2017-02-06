@@ -18,7 +18,7 @@
     "express": "~4.12.2",
     "node-cache" : "*",
     "xml" : "*",
-    "imdb-api" : "*",
+    "imdb" : "*",
     "es6-promise" : "*"
   }
 }
