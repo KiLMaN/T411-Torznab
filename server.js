@@ -33,8 +33,8 @@ var DEFAULT_LIMIT = 50;
 var TVRAGE_CACHE_MINS = 300; // 5Hours
 
 // System variables
-var baseUrl = "http://api.t411.li";
-var baset411 = "https://www.t411.li";
+var baseUrl = "http://api.t411.ai";
+var baset411 = "https://www.t411.ai";
 var userToken = ""; // Holds the user token for the T411 API
 
 var _T411_CatTVShow = {name:"Série TV", idCat : 0};
