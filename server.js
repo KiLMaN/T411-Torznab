@@ -12,7 +12,7 @@ var path = require('path');
 var _ = require('underscore');
 var express = require ('express');
 //var tvrage = require('tvragejson');
-var request = require ('request');
+var request = require('request');
 var xml = require('xml');
 var NodeCache = require('node-cache');
 var tvmaze = require('./tvmaze.js');
@@ -33,8 +33,8 @@ var DEFAULT_LIMIT = 50;
 var TVRAGE_CACHE_MINS = 300; // 5Hours
 
 // System variables
-var baseUrl = "http://api.t411.ai";
-var baset411 = "https://www.t411.ai";
+var baseUrl = config.baseAPI;//"http://api.t411.ai";
+var baset411 = config.baseT411;//"https://www.t411.ai";
 var userToken = ""; // Holds the user token for the T411 API
 
 var _T411_CatTVShow = {name:"Série TV", idCat : 0};
@@ -704,6 +704,7 @@ function loginT411()
 			'password':userPass
 		}
 	};
+	_logger.info("request "+requestData.url);
 	_logger.info("Trying to log into T411 with user : '"+userName+"'");
 	request (requestData, callbackLoginT411); // Login then start server if sucessfull
 }
