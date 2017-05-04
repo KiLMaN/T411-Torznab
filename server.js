@@ -213,6 +213,7 @@ function research(urlSearch,callback,originalQuery)
 	else
 		urlSearch += '?offset='+offset+'&limit='+limit;
 	var requestData = {
+		rejectUnauthorized:false,
 		url: urlSearch,
 		headers:{
 			'Authorization':userToken
@@ -437,6 +438,7 @@ app.get ('/torrent/:torrentid',
 		if (!isNaN (req.params.torrentid) && req.params.torrentid != 0)
 		{
 			var requestData = {
+				rejectUnauthorized:false,
 				url: baseUrl +  "/torrents/download/" + req.params.torrentid,
 				headers:{
 					'Authorization':userToken
@@ -551,6 +553,7 @@ function callbackT411Cats(error,response,body)
 function getT411Cats()
 {
 	var requestData ={
+		rejectUnauthorized:false,
 		url : baseUrl +"/categories/tree/",
 		headers:{
 			'Authorization':userToken
@@ -632,6 +635,7 @@ function callbackT411Terms(error,response,body)
 function getT411Terms()
 {
 	var requestData ={
+		rejectUnauthorized:false,
 		url : baseUrl +"/terms/tree/",
 		headers:{
 			'Authorization':userToken
@@ -697,6 +701,7 @@ function callbackLoginT411 (error, response, body)
 function loginT411()
 {
 	var requestData = {
+		rejectUnauthorized:false,
 		url: baseUrl+"/auth",
 		method:'POST',
 		form: {
