@@ -4,6 +4,6 @@
 	"listenPort":9876,
 	"debugVerified":false,
 	"onlyVerified":true,
-	"baseT411":"https://t411.ai",
-	"baseAPI":"https://api.t411.ai"
+	"baseT411":"https://t411.al",
+	"baseAPI":"https://api.t411.al"
 }

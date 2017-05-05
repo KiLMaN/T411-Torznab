@@ -19,7 +19,7 @@ Simply run :
 node server.js 
 ```
 Then the proxy is listening on the port specified
-It will try to connect to http://api.t411.ch/ to obtain a token with the credentials set in the server.js file
+It will try to connect to http://api.t411.al/ to obtain a token with the credentials set in the server.js file
 
 Now you can configure Sonarr to use this proxy to make requests to T411
 ![Settings Window](https://raw.github.com/KiLMaN/T411-Torznab/screenshots/T411-Torznab-Sonarr-Configuration.png)
